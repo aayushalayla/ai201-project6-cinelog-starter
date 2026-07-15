@@ -59,3 +59,25 @@ The rebase caused an add/add conflict in .gitignore because both main and my fea
 I ran the full test suite with pytest tests/ -v and confirmed that both the collection and watchlist tests passed. I also checked git status to make sure the working tree was clean and ran git log --merges upstream/main..HEAD to confirm that the branch had no merge commits.
 
 ## PR Description
+This PR finishes the watchlist feature and addresses all six review comments.
+
+The watchlist now uses the same naming and validation patterns as the collection service. I renamed `save_to_watchlist()` to `add_to_watchlist()`, added duplicate protection, added coverage for nonexistent film IDs, rebased the branch onto the UUID-based version of `main`, and restored `WatchlistEntry` using UUID foreign keys.
+
+## AI Usage
+I used AI to help me understand the existing collection-service pattern, especially how `add_to_collection()` checks for duplicate entries and handles nonexistent films. I also used it to troubleshoot the rebase, review my conventional commit messages, and stress-test my reasoning about watchlist visibility and sort order. I verified the suggestions against the actual code and test results before applying them.
+
+## Design decisions
+
+### Visibility
+
+I kept `public=True` as the default for this PR. CineLog treats the watchlist as part of a user’s film profile, and the current endpoint only accepts `film_id`. Changing the default to private would make every new entry invisible without giving the caller any way to make it public.
+
+The privacy concern is still valid, so a better follow-up would be to let the endpoint accept an explicit `public` value.
+
+### Sort order
+
+I changed the watchlist to sort by `date_added` ascending, so the films that have been waiting longest appear first.
+
+I chose this because a watchlist functions more like a backlog than an activity feed. Alphabetical order ignores the history of the list, while newest-first keeps rewarding recent additions and lets older films disappear indefinitely. Oldest-first gives the watchlist a simple queue-like behavior.
+
+A stronger long-term design would support user-defined ordering through a `position` or `priority` field.
