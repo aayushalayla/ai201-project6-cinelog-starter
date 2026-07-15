@@ -8,8 +8,9 @@ from app import db
 from models import Film, WatchlistEntry
 from services.collection_service import FilmNotFoundError
 
-
-def save_to_watchlist(user_id, film_id):
+#changed save_to_watchlist to add_to_watchlist
+#updated all call sites 
+def add_to_watchlist(user_id, film_id):
     """
     Save a film to a user's watchlist.
 
