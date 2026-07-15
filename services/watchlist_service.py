@@ -39,7 +39,7 @@ def add_to_watchlist(user_id, film_id):
 
     if existing:
         raise AlreadyInWatchlistError(
-        f"Film '{film_id}' is already in this user's watchlist"
+            f"Film '{film_id}' is already in this user's watchlist"
     )
 
     entry = WatchlistEntry(user_id=user_id, film_id=film_id)
@@ -62,7 +62,7 @@ def get_watchlist(user_id):
         WatchlistEntry.query
         .filter_by(user_id=user_id)
         .join(Film)
-        .order_by(Film.title.asc())
+        .order_by(WatchlistEntry.date_added.asc())
         .all()
     )
 
